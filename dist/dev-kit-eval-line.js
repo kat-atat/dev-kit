@@ -14,6 +14,14 @@ class DevKitEvalLine extends HTMLElement {
 
     this.prevButton.addEventListener("click", ()=> this.prev());
     this.runButton.addEventListener("click", ()=> this.run());
+    this.input.addEventListener("keydown", (event)=> {
+      const enterKeyCode = 13;
+      const upKeyCode = 38;
+      const downKeyCode = 40;
+      if (event.keyCode === enterKeyCode) this.run();
+      if (event.keyCode === upKeyCode) this.prev();
+      if (event.keyCode === downKeyCode) this.next();
+    });
   }
 
   run() {
@@ -42,6 +50,12 @@ class DevKitEvalLine extends HTMLElement {
   prev() {
     if (this.stack.length === 0) return;
     this.referencingIndex = Math.max(0, this.referencingIndex-1);
+    this.input.value = this.stack[this.referencingIndex];
+  }
+
+  next() {
+    if (this.stack.length === 0) return;
+    this.referencingIndex = Math.min(this.stack.length-1, this.referencingIndex+1);
     this.input.value = this.stack[this.referencingIndex];
   }
 
