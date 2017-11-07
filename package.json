@@ -1,10 +1,14 @@
 {
   "name": "dev-kit",
   "version": "0.0.1",
-  "description": "",
+  "description": "develop tools for client-side",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kat-atat/dev-kit.git"
   },
   "license": "ISC",
   "dependencies": {
