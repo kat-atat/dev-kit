@@ -2,7 +2,7 @@ class DevKitEvalLine extends HTMLElement {
   constructor() {
     super();
   }
-  connectedCallback() {
+  createdCallback() {
     this.innerHTML = DevKitEvalLine.template;
     this.input = this.querySelector("input");
     this.prevButton = this.querySelectorAll("button")[0];
@@ -94,4 +94,4 @@ class DevKitEvalLine extends HTMLElement {
 }
 
 
-customElements.define(DevKitEvalLine.is, DevKitEvalLine);
+document.registerElement(DevKitEvalLine.is, DevKitEvalLine);

@@ -2,7 +2,7 @@ class DevKitConsoleLog extends HTMLElement {
   constructor() {
     super();
   }
-  connectedCallback() {
+  createdCallback() {
     this.innerHTML = DevKitConsoleLog.template;
     this.textarea = this.querySelector("textarea");
     this.stack = [];
@@ -70,4 +70,4 @@ class DevKitConsoleLog extends HTMLElement {
 }
 
 
-customElements.define(DevKitConsoleLog.is, DevKitConsoleLog);
+document.registerElement(DevKitConsoleLog.is, DevKitConsoleLog);

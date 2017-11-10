@@ -6,7 +6,7 @@ class DevKit extends HTMLElement {
   constructor() {
     super();
   }
-  connectedCallback() {
+  createdCallback() {
     this.innerHTML = DevKit.template;
     this.console = this.querySelector("dev-kit-console-log");
     this.evalLine = this.querySelector("dev-kit-eval-line");
@@ -43,4 +43,4 @@ class DevKit extends HTMLElement {
 }
 
 
-customElements.define(DevKit.is, DevKit);
+document.registerElement(DevKit.is, DevKit);
