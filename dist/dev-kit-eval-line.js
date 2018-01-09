@@ -14,16 +14,31 @@ class DevKitEvalLine extends HTMLElement {
     this.stackSize = 64;
     this.referencingIndex = 0;
 
-    this.prevButton.addEventListener("click", ()=> this.prev());
-    this.runButton.addEventListener("click", ()=> this.run());
-    this.input.addEventListener("keydown", (event)=> {
+    this.prevButton.addEventListener("click", this);
+    this.runButton.addEventListener("click", this);
+    this.prevButton.addEventListener("touchstart", this);
+    this.runButton.addEventListener("touchstart", this);
+    this.input.addEventListener("keydown", this);
+  }
+
+  handleEvent(event) {
+    if (event.type === "touchstart") {
+      event.preventDefault(); // on iOS, supress onscreen-keyboard hiding
+    }
+
+    if (event.type === "click" || event.type === "touchstart") {
+      if (event.target === this.prevButton) this.prev();
+      if (event.target === this.runButton) this.run();
+    }
+
+    if (event.type === "keydown") {
       const enterKeyCode = 13;
       const upKeyCode = 38;
       const downKeyCode = 40;
       if (event.keyCode === enterKeyCode) this.run();
       if (event.keyCode === upKeyCode) this.prev();
       if (event.keyCode === downKeyCode) this.next();
-    });
+    }
   }
 
   run() {
