@@ -20,7 +20,8 @@ class DevKit extends HTMLElement {
   handleEvent(event) {
     if (event.type === "commit") {
       let value = event.detail.value;
-      this.eval(value);
+      let result = this.eval(value);
+      this.logBox.log(result);
     }
 
     if (event.type === "error") {
@@ -41,7 +42,7 @@ class DevKit extends HTMLElement {
   }
 
   eval(string) {
-    eval.call(window, string);
+    return eval.call(window, string);
   }
 
   static get is() {
