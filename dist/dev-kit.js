@@ -1,29 +1,47 @@
-import "./dev-kit-console-log.js";
-import "./dev-kit-eval-line.js";
+import "./log-box.js";
+import "./commit-line.js";
 
 
 class DevKit extends HTMLElement {
   constructor() {
     super();
-  }
-  connectedCallback() {
-    if (this._constructed) return;
-    this._constructed = true;
-    this.innerHTML = DevKit.template;
-    this.console = this.querySelector("dev-kit-console-log");
-    this.evalLine = this.querySelector("dev-kit-eval-line");
 
-    window.addEventListener("error", (e)=> this.onevalerror(e));
-    this.evalLine.onevaluated = (obj)=> this.console.log(obj);
-    this.evalLine.onevalerror = (e)=> this.onevalerror(e);
+    let shadow = this.attachShadow({mode: "open"});
+    shadow.innerHTML = DevKit.template;
+
+    this.logBox = shadow.querySelector("log-box");
+    this.commitLine = shadow.querySelector("commit-line");
+
+    window.addEventListener("error", this);
+    this.commitLine.addEventListener("commit", this);
+    this.overrideNativeConsole();
   }
 
-  onevalerror(e) {
-    let msg = `${e.message}`;
-    if (e.filename !== undefined) {
-      msg += `[${e.filename}: ${e.lineno}: ${e.colno}]`;
+  handleEvent(event) {
+    if (event.type === "commit") {
+      let value = event.detail.value;
+      this.eval(value);
     }
-    this.console.log(msg);
+
+    if (event.type === "error") {
+      let msg = `${event.message}`;
+      if (event.filename !== undefined) {
+        msg += `[${event.filename}: ${event.lineno}: ${event.colno}]`;
+      }
+      this.logBox.log(msg);
+    }
+  }
+
+  overrideNativeConsole() {
+    let original = console.log.bind(console);
+    console.log = (function log(...obj) {
+      original(...obj);
+      this.logBox.log(...obj);
+    }).bind(this);
+  }
+
+  eval(string) {
+    eval.call(window, string);
   }
 
   static get is() {
@@ -31,18 +49,16 @@ class DevKit extends HTMLElement {
   }
 
   static get template() {
-    const host = this.is;
     return `<style>
-        ${host} {
-          display: block;
-          width: 100%;
-        }
-      </style>
+      :host {
+        display: block;
+        width: 100%;
+      }
+    </style>
 
-      <dev-kit-console-log></dev-kit-console-log>
-      <dev-kit-eval-line></dev-kit-eval-line>`;
+    <log-box></log-box>
+    <commit-line></commit-line>`;
   }
 }
-
 
 customElements.define(DevKit.is, DevKit);

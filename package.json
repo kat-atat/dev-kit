@@ -10,9 +10,5 @@
     "type": "git",
     "url": "git+https://github.com/kat-atat/dev-kit.git"
   },
-  "license": "ISC",
-  "dependencies": {
-    "document-register-element": "^1.7.0",
-    "traceur": "0.0.111"
-  }
+  "license": "ISC"
 }
