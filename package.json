@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kat-atat/dev-kit.git"
+    "url": "git+https://bitbucket.org/ni_devel/dev-kit.git"
   },
   "license": "ISC"
 }
