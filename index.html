@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script type="module" src="./dev-kit.js"></script>
+  <script type="module" src="dev-kit.js" onload="console.log('loaded')"></script>
+  <script>
+    customElements.whenDefined("dev-kit")
+    .then(()=> console.log("defined"));
+  </script>
 </head>
 <body>
-  <dev-kit style="position: fixed; bottom: 0"></dev-kit>
+  <dev-kit></dev-kit>
 </body>
 </html>

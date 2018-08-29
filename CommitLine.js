@@ -1,10 +1,32 @@
+const TEMPLATE =
+`<style>
+  :host, :host * { box-sizing: border-box; }
+  :host input {
+    width: 100%;
+    font-size: 16px; /* supress iOS auto-zoom */
+  }
+
+  :host { display: flex; }
+  :host .input { flex: 1 0 auto; }
+
+  :host input,
+  :host button { -webkit-appearance: none; }
+  :host .prevButton::before { content: "🔼"; }
+  :host .commitButton::before { content: ">>"; }
+</style>
+
+<label class="input"><input type="text"/></label>
+<button class="prevButton"></button>
+<button class="commitButton"></button>`;
+
+
 class CommitLine extends HTMLElement {
   constructor() {
     super();
 
     let shadow = this.attachShadow({mode: "open"});
 
-    shadow.innerHTML = CommitLine.template;
+    shadow.innerHTML = TEMPLATE;
 
     this.input = shadow.querySelector("input");
     this.prevButton = shadow.querySelectorAll("button")[0];
@@ -77,34 +99,7 @@ class CommitLine extends HTMLElement {
     this.referencingIndex = Math.min(this.stack.length-1, this.referencingIndex+1);
     this.input.value = this.stack[this.referencingIndex];
   }
-
-  static get is() {
-    return "commit-line";
-  }
-
-  static get template() {
-    return `<style>
-      :host, :host * { box-sizing: border-box; }
-      :host input {
-        width: 100%;
-        font-size: 16px; /* supress iOS auto-zoom */
-      }
-
-      :host { display: flex; }
-      :host .input { flex: 1 0 auto; }
-
-      :host input,
-      :host button { -webkit-appearance: none; }
-      :host .prevButton::before { content: "🔼"; }
-      :host .commitButton::before { content: ">>"; }
-    </style>
-
-    <label class="input"><input type="text"/></label>
-    <button class="prevButton"></button>
-    <button class="commitButton"></button>`;
-  }
 }
 
 
-customElements.define(CommitLine.is, CommitLine);
-
+export default CommitLine;
