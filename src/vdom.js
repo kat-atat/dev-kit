@@ -10,43 +10,43 @@ const state = {
 };
 
 const action = {
-  onkeydown: ({keyCode})=> (state)=> {
+  onkeydown: ({keyCode, target})=> (state)=> {
     const enterKeyCode = 13;
     const upKeyCode = 38;
     const downKeyCode = 40;
-    if (keyCode === enterKeyCode) action.eval(state);
-    if (keyCode === upKeyCode) action.prev(state);
-    if (keyCode === downKeyCode) action.next(state);
+    switch (keyCode) {
+      case enterKeyCode: return target.value !== "" ? action.eval({...state, input: target.value}) : {};
+      case upKeyCode: return action.prev(state);
+      case downKeyCode: return action.next(state);
+    }
   },
 
   onupbuttonpress: ()=> (state)=> action.prev(state),
   onenterbuttonpress: ()=> (state)=> action.eval(state),
 
   prev: (state)=> {
-    if (state.inputHistory.length === 0) return;
-    state.historyIndex = Math.max(0, state.historyIndex-1);
-    state.input = state.inputHistory[state.historyIndex];
-    console.log("prev");
+    let previndex = Math.min(state.inputHistory.length-1, state.historyIndex+1);
+    return {
+      historyIndex: previndex,
+      input: state.inputHistory[previndex],
+    }
   },
 
   next: (state)=> {
-    if (state.inputHistory.length === 0) return;
-    state.historyIndex = Math.min(state.inputHistory.length-1, state.historyIndex+1);
-    state.input = state.inputHistory[state.historyIndex];
-    console.log("next");
+    let nextIndex = Math.max(0, state.historyIndex-1);
+    return {
+      historyIndex: nextIndex,
+      input: state.inputHistory[nextIndex],
+    }
   },
 
   eval: (state)=> {
-    if (state.input === "") {
-      return;
+    return {
+      input: "",
+      inputHistory: [state.input, ...state.inputHistory],
+      logHistory: [...state.logHistory, "eval(" + state.input + ")"],
+      historyIndex: -1,
     }
-    state.inputHistory.push(state.input);
-    state.input = "";
-    if (state.maxInputHistory < state.inputHistory.length) state.inputHistory.shift();
-    state.historyIndex = state.inputHistory.length;
-    
-    console.log("eval");
-    console.log(state.input)
   },
 };
 
