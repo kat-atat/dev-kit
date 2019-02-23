@@ -16,14 +16,14 @@ const action = {
     const upKeyCode = 38;
     const downKeyCode = 40;
     switch (keyCode) {
-      case enterKeyCode: return action.eval(state);
+      case enterKeyCode: return action.push(state);
       case upKeyCode: return action.prev(state);
       case downKeyCode: return action.next(state);
     }
   },
 
   onupbuttonpress: ()=> (state)=> action.prev(state),
-  onenterbuttonpress: ()=> (state)=> action.eval(state),
+  onenterbuttonpress: ()=> (state)=> action.push(state),
 
   prev: ({historyIndex, inputHistory})=> {
     let prevIndex = Math.min(historyIndex + 1, inputHistory.length - 1);
@@ -41,13 +41,19 @@ const action = {
     }
   },
 
-  eval: ({input, inputHistory, maxInputHistory, logHistory, maxLogHistory})=> {
-    if (input === "") return;
+  push: (state)=> {
+    if (state.input === "") return;
     return {
       input: "",
-      inputHistory: [input, ...inputHistory].slice(0, maxInputHistory),
-      logHistory: [...logHistory, "eval(" + input + ")"].slice(Math.max(0, logHistory.length+1 - maxLogHistory)),
+      inputHistory: [state.input, ...state.inputHistory].slice(0, state.maxInputHistory),
       historyIndex: -1,
+      ...action.log(state),
+    }
+  },
+
+  log: (state)=> {
+    return {
+      logHistory: [...state.logHistory, state.log].slice(Math.max(0, state.logHistory.length+1 - state.maxLogHistory)),
     }
   },
 };

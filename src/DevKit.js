@@ -5,7 +5,7 @@ export default class DevKit extends HTMLElement {
     super();
     this.shadow = this.attachShadow({mode: "open"});
     this.shadow.innerHTML = this.constructor.TEMPLATE;
-    vdom(this.shadow.querySelector(".vdom"));
+    this.vdom = vdom(this.shadow.querySelector(".vdom"));
   }
 
   static get TEMPLATE() {
