@@ -2,84 +2,72 @@ import {h, app} from "./hyperapp.js";
 
 const state = {
   input: "",
-  inputHistory: [],
-  maxInputHistory: 64,
+  history: [],
+  maxHistoryLength: 64,
   historyIndex: 0,
-  logHistory: [],
-  maxLogHistory: 8,
+  log: [],
+  maxLogLength: 8,
+  KEYCODE_ENTER: 13,
+  KEYCODE_UP: 38,
+  KEYCODE_DOWN: 40,
 };
 
 const action = {
-  oninput: ({target})=> ()=> ({input: target.value}),
-  onkeydown: ({keyCode})=> (state)=> {
-    const enterKeyCode = 13;
-    const upKeyCode = 38;
-    const downKeyCode = 40;
-    switch (keyCode) {
-      case enterKeyCode: return action.push(state);
-      case upKeyCode: return action.prev(state);
-      case downKeyCode: return action.next(state);
-    }
-  },
-
+  oninput: ({target: {value}})=> ()=> ({input: value}),
   onupbuttonpress: ()=> (state)=> action.prev(state),
-  onenterbuttonpress: ()=> (state)=> action.push(state),
+  onenterbuttonpress: ()=> (state)=> action.pushHistory(state),
 
-  prev: ({historyIndex, inputHistory})=> {
-    let prevIndex = Math.min(historyIndex + 1, inputHistory.length - 1);
-    return {
-      historyIndex: prevIndex,
-      input: inputHistory[prevIndex],
+  onkeydown: ({keyCode})=> (state)=> {
+    switch (keyCode) {
+      case state.KEYCODE_ENTER: return action.pushHistory(state);
+      case state.KEYCODE_UP: return action.prev(state);
+      case state.KEYCODE_DOWN: return action.next(state);
     }
   },
 
-  next: ({historyIndex, inputHistory})=> {
-    let nextIndex = Math.max(0, historyIndex - 1);
-    return {
-      historyIndex: nextIndex,
-      input: inputHistory[nextIndex],
+  prev: ({history, historyIndex})=> ({
+    historyIndex: Math.min(historyIndex + 1, history.length - 1),
+    input: history[Math.min(historyIndex + 1, history.length - 1)],
+  }),
+
+  next: ({history, historyIndex})=> ({
+    historyIndex: Math.max(0, historyIndex - 1),
+    input: history[Math.max(0, historyIndex - 1)],
+  }),
+
+  pushHistory: (state)=> {
+    if (state.input !== "") {
+      action._onpushed(state.input);
+      return {
+        historyIndex: -1,
+        input: "",
+        history: [state.input, ...state.history].slice(0, state.maxHistoryLength),
+      }
     }
   },
 
-  push: (state)=> {
-    if (state.input === "") return;
-    return {
-      input: "",
-      inputHistory: [state.input, ...state.inputHistory].slice(0, state.maxInputHistory),
-      historyIndex: -1,
-      ...action.log(state),
-    }
-  },
+  log: (string)=> (state)=> ({
+    log: [...state.log, string].slice(Math.max(0, state.log.length+1 - state.maxLogLength)),
+  }),
 
-  log: (state)=> {
-    return {
-      logHistory: [...state.logHistory, state.log].slice(Math.max(0, state.logHistory.length+1 - state.maxLogHistory)),
-    }
-  },
+  onpushed: (func)=> { action._onpushed = func; },
+  _onpushed: (string)=> {},
 };
 
-let stringify = (object)=> {
-  switch (object) {
-    case undefined: return "undefined";
-    case null: return "null";
-    default: return object;
-  }
-}
-
-const view = ({input, logHistory}, {oninput, onkeydown, onupbuttonpress, onenterbuttonpress})=>
+const view = (state, action)=>
   h("div", {}, [
-    h("textarea", {class: "logbox", readonly: true}, logHistory.map((log)=> stringify(log)).join("\n")),
+    h("textarea", {class: "logbox", readonly: true}, state.log.join("\n")),
     h("label", {},
       h("input", {
         class: "input",
         type: "text",
-        value: input,
-        oninput: (event)=> oninput(event),
-        onkeydown: (event)=> onkeydown(event),
+        value: state.input,
+        oninput: (event)=> action.oninput(event),
+        onkeydown: (event)=> action.onkeydown(event),
       }),
     ),
-    h("button", {class: "up", onclick: ()=> onupbuttonpress()}, "↑"),
-    h("button", {class: "enter", onclick: ()=> onenterbuttonpress()}, ">>"),
+    h("button", {class: "up", ontouchstart: (event)=> action.onupbuttonpress(event)}, "↑"),
+    h("button", {class: "enter", ontouchstart: (event)=> action.onenterbuttonpress(event)}, ">>"),
   ])
 
 export default (node)=> app(state, action, view, node);
