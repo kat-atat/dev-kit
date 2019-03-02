@@ -6,11 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production --entry ./src/dev-kit.js --output ./dist/dev-kit.js",
-    "dev": "webpack --mode development --entry ./src/dev-kit.js --output ./dist/dev-kit.js --watch"
+    "dev": "webpack --mode development --entry ./src/dev-kit.js --output ./dist/dev-kit.js --watch",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/ni_devel/dev-kit.git"
+    "url": "git+https://github.com/kat-atat/dev-kit.git"
   },
   "files": [
     "src",
