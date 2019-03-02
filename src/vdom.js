@@ -55,11 +55,10 @@ const action = {
 };
 
 const view = (state, action)=>
-  h("div", {}, [
-    h("textarea", {class: "logbox", readonly: true}, state.log.join("\n")),
-    h("label", {},
+  h("div", {class: "devkit"}, [
+    h("textarea", {class: "output", readonly: true}, state.log.join("\n")),
+    h("label", {class: "input"},
       h("input", {
-        class: "input",
         type: "text",
         value: state.input,
         oninput: (event)=> action.oninput(event),

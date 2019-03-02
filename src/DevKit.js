@@ -25,6 +25,54 @@ export default class DevKit extends HTMLElement {
 
   static get TEMPLATE() {
     return `
+<style>
+  :host, :host * {
+    box-sizing: border-box;
+  }
+
+  :host button,
+  :host input,
+  :host textarea {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+    vertical-align: top;
+    border: solid black 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+    font-family: monospace;
+  }
+
+  :host .devkit {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+
+  :host .output {
+    width: 100%;
+    height: 8em;
+    background: #000;
+    color: #fff;
+    border: inset #888 2px;
+  }
+
+  :host .input {
+    width: 80%;
+    height: calc(1em + 4px);
+    border: inset #888 2px;
+  }
+
+  :host .enter,
+  :host .up {
+    width: 10%;
+    height: 2em;
+    background-color: #888;
+    border: outset #888 2px;
+  }
+</style>
 <div class="vdom"></div>
     `;
   }
