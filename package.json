@@ -12,6 +12,11 @@
     "type": "git",
     "url": "git+https://bitbucket.org/ni_devel/dev-kit.git"
   },
+  "files": [
+    "src",
+    "dist",
+    "index.html"
+  ],
   "license": "ISC",
   "devDependencies": {
     "hyperapp": "^1.2.9",
