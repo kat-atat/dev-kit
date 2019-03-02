@@ -6,6 +6,7 @@ const state = {
   maxHistoryLength: 64,
   historyIndex: 0,
   log: [],
+  onpush: (string)=> {},
   maxLogLength: 8,
   KEYCODE_ENTER: 13,
   KEYCODE_UP: 38,
@@ -37,7 +38,7 @@ const action = {
 
   pushHistory: (state)=> {
     if (state.input !== "") {
-      action._onpushed(state.input);
+      state.onpush(state.input);
       return {
         historyIndex: -1,
         input: "",
@@ -50,8 +51,7 @@ const action = {
     log: [...state.log, string].slice(Math.max(0, state.log.length+1 - state.maxLogLength)),
   }),
 
-  onpushed: (func)=> { action._onpushed = func; },
-  _onpushed: (string)=> {},
+  set: (newState)=> (oldState)=> ({...oldState, ...newState}),
 };
 
 const view = (state, action)=>

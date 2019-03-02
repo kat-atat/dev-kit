@@ -8,16 +8,18 @@ export default class DevKit extends HTMLElement {
     this.vdom = vdom(this.shadow.querySelector(".vdom"));
 
     this.overrideNativeConsole();
-
-    this.vdom.onpushed((string)=> {
-      try {
-        let result = stringify(evaluate(string));
-        console.log(result);
-      }
-      catch (err) {
-        console.log(err);
-      }
+    this.vdom.set({
+      onpush: (string)=> {
+        try {
+          let result = stringify(evaluate(string));
+          console.log(result);
+        }
+        catch (err) {
+          console.log(err);
+        }
+      },
     });
+
     window.addEventListener("error", (err)=> errorhandler(err));
   }
 
