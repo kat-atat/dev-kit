@@ -65,8 +65,8 @@ const view = (state, action)=>
         onkeydown: (event)=> action.onkeydown(event),
       }),
     ),
-    h("button", {class: "up", ontouchstart: (event)=> action.onupbuttonpress(event)}, "↑"),
-    h("button", {class: "enter", ontouchstart: (event)=> action.onenterbuttonpress(event)}, ">>"),
+    h("button", {class: "up", ontouchstart: (event)=> action.onupbuttonpress(event)}),
+    h("button", {class: "enter", ontouchstart: (event)=> action.onenterbuttonpress(event)}),
   ])
 
 export default (node)=> app(state, action, view, node);
