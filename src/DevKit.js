@@ -23,6 +23,18 @@ export default class DevKit extends HTMLElement {
     window.addEventListener("error", (err)=> errorhandler(err));
   }
 
+  attributeChangedCallback(name, oldVal, newVal) {
+    switch (name) {
+      case "max-log-length": return this.vdom.set({maxLogLength: parseInt(newVal)});
+    }
+  }
+
+  static get observedAttributes() {
+    return [
+      "max-log-length",
+    ];
+  }
+
   static get TEMPLATE() {
     return `
 <style>

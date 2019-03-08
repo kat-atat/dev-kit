@@ -7,7 +7,7 @@ const state = {
   historyIndex: 0,
   log: [],
   onpush: (string)=> {},
-  maxLogLength: 8,
+  maxLogLength: 64,
   KEYCODE_ENTER: 13,
   KEYCODE_UP: 38,
   KEYCODE_DOWN: 40,
