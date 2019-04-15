@@ -1,3 +1,4 @@
+import css from "./css.js";
 import vdom from "./vdom.js";
 
 export default class DevKit extends HTMLElement {
@@ -5,27 +6,32 @@ export default class DevKit extends HTMLElement {
     super();
     this.shadow = this.attachShadow({mode: "open"});
     this.shadow.innerHTML = this.constructor.TEMPLATE;
-    this.vdom = vdom(this.shadow.querySelector(".vdom"));
+    this.vdom = vdom(this.shadow.querySelector(".main"));
 
-    this.overrideNativeConsole();
-    this.vdom.set({
-      onpush: (string)=> {
-        try {
-          let result = stringify(evaluate(string));
-          console.log(result);
-        }
-        catch (err) {
-          console.log(err);
-        }
-      },
+    this.vdom.setOnpush((string)=> {
+      let result = evaluate(string);
+      this.log(result);
     });
 
-    window.addEventListener("error", (err)=> errorhandler(err));
+    window.addEventListener("error", (err)=> {
+      let msg = `${event.message}`;
+      if (event.filename) {
+        msg += `[${event.filename}: ${event.lineno}: ${event.colno}]`;
+      }
+      this.log(msg);
+    });
+
+    hookNativeConsole(this);
+  }
+
+  log(...objects) {
+    objects.map((object)=> stringify(object))
+    .forEach((string)=> this.vdom.pushLog(string));
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
     switch (name) {
-      case "max-log-length": return this.vdom.set({maxLogLength: parseInt(newVal)});
+      case "max-log-length": return this.vdom.setMaxLogLength(parseInt(newVal));
     }
   }
 
@@ -37,66 +43,23 @@ export default class DevKit extends HTMLElement {
 
   static get TEMPLATE() {
     return `
-<style>
-  :host,
-  :host * { box-sizing: border-box; }
-
-  :host {
-    display: block;
-    width: 100%;
-  }
-
-  :host input,
-  :host button { -webkit-appearance: none; }
-
-  :host input {
-    width: 100%;
-    font-size: 16px; /* supress iOS auto-zoom */
-  }
-
-  :host textarea {
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-  }
-
-  :host textarea {
-    width: 100%;
-    min-height: 8em;
-    line-height: 1em;
-    font-family: monospace;
-    text-size: 16px;
-    background: black;
-    color: white;
-  }
-
-
-  :host .devkit {
-    display: flex;
-    flex-flow: row wrap;
-  }
-  :host .output { flex: 1 0 auto; }
-  :host .input { flex: 1 0 auto; }
-
-  :host .up::before { content: "🔼"; }
-  :host .enter::before { content: ">>"; }
-</style>
-<div class="vdom"></div>
+<style>${css}</style>
+<div class="main"></div>
     `;
-  }
-  
-  overrideNativeConsole() {
-    let original = console.log.bind(console);
-    console.log = (function(...obj) {
-      original(...obj);
-      this.vdom.log(...obj);
-    }).bind(this);
   }
 }
 
-let evaluate = (string)=> eval.call(window, string);
 
-let stringify = (object)=> {
+const evaluate = (string)=> {
+  try {
+    return eval.call(window, string);
+  }
+  catch (err) {
+    return err;
+  }
+}
+
+const stringify = (object)=> {
   switch (object) {
     case undefined: return "undefined";
     case null: return "null";
@@ -104,10 +67,10 @@ let stringify = (object)=> {
   }
 }
 
-let errorhandler = (event)=> {
-  let msg = `${event.message}`;
-  if (event.filename !== undefined) {
-    msg += `[${event.filename}: ${event.lineno}: ${event.colno}]`;
-  }
-  console.log(msg);
+const hookNativeConsole = (consoleLike)=> {
+  let original = console.log.bind(console);
+  console.log = function(...objects) {
+    original(...objects);
+    consoleLike.log(...objects);
+  };
 }
