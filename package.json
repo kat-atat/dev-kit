@@ -1,6 +1,6 @@
 {
   "name": "dev-kit",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "develop tools for client-side",
   "main": "index.html",
   "scripts": {
@@ -19,10 +19,8 @@
     "index.html"
   ],
   "license": "ISC",
-  "dependencies": {
-    "hyperapp": "^1.2.9"
-  },
   "devDependencies": {
+    "hyperapp": "^1.2.9",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
   }
