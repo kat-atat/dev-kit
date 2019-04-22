@@ -18,11 +18,10 @@ const view = (state, action)=>
     h("textarea", {
       class: "dev-kit__output",
       readonly: true,
-      onupdate: (el)=> {
-        if (state.log.autoScroll) {
-          el.scrollTop = el.scrollHeight;
-        }
-      },
+      onupdate: (el)=>
+        state.log.autoScroll
+          ? el.scrollTop = el.scrollHeight
+          : null,
     }, state.log.values.join("\n")),
     h("label", {class: "dev-kit__input"},
       h("input", {

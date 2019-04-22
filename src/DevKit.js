@@ -1,5 +1,6 @@
 import css from "./css.js";
 import vdom from "./vdom.js";
+import hookFunctions from "./hookFunctions.js";
 
 export default class DevKit extends HTMLElement {
   constructor() {
@@ -21,7 +22,7 @@ export default class DevKit extends HTMLElement {
       this.log(msg);
     });
 
-    hookNativeConsole(this);
+    hookFunctions(console, this);
   }
 
   log(...objects) {
@@ -65,12 +66,4 @@ const stringify = (object)=> {
     case null: return "null";
     default: return object + "";
   }
-}
-
-const hookNativeConsole = (consoleLike)=> {
-  let original = console.log.bind(console);
-  console.log = function(...objects) {
-    original(...objects);
-    consoleLike.log(...objects);
-  };
 }
