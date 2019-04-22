@@ -44,6 +44,9 @@ const view = (state, action)=>
       + (state.log.autoScroll ? " dev-kit__auto-scroll-toggle--checked" : ""),
       onclick: (ev)=> action.log.autoScrollToggleClick(),
     }),
+    h("div", {class: "dev-kit__content"},
+      h("slot", {}),
+    ),
   ])
 
 export default view;
